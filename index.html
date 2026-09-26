@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediMun | Equipos de curación</title>
+  <meta name="description" content="MediMun: tienda en línea de material de curación. Gasas, vendas, apósitos y más.">
+  <style>
+    :root {
+      --primary: #0e7c86;
+      --primary-dark: #0a5c63;
+      --accent: #f2a541;
+      --bg: #f6f9fa;
+      --card: #ffffff;
+      --text: #1d2b30;
+      --muted: #5f7379;
+      --border: #dde7ea;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+    /* Header */
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      gap: 16px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+    }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: var(--muted); font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+    .cart-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .cart-btn:hover { background: var(--primary-dark); }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      padding: 72px 0;
+    }
+    .hero .container {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .hero h1 { font-size: 2.6rem; line-height: 1.15; margin-bottom: 16px; }
+    .hero p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 28px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-weight: 600;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn-accent { background: var(--accent); color: var(--text); }
+    .btn-outline { border-color: #fff; color: #fff; background: transparent; }
+    .hero-visual {
+      margin: 0;
+      border-radius: 20px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+    .hero-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-visual figcaption {
+      position: absolute;
+      right: 8px;
+      bottom: 6px;
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+    .hero-visual figcaption a { text-decoration: underline; }
+
+    /* Beneficios */
+    .benefits { padding: 32px 0; background: var(--card); border-bottom: 1px solid var(--border); }
+    .benefits .container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      text-align: center;
+    }
+    .benefit strong { display: block; color: var(--primary); }
+    .benefit span { color: var(--muted); font-size: 0.9rem; }
+
+    /* Secciones */
+    section { padding: 64px 0; }
+    .section-title { font-size: 1.8rem; margin-bottom: 8px; }
+    .section-sub { color: var(--muted); margin-bottom: 32px; }
+
+    /* Categorías */
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+    }
+    .category {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 16px;
+      text-align: center;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .category:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .category .icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+    /* Productos */
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .product {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-img {
+      background: #e7f3f4;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      font-size: 3.5rem;
+    }
+    .product-body { padding: 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .product-cat { font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .product-name { font-weight: 600; }
+    .product-desc { color: var(--muted); font-size: 0.9rem; flex: 1; }
+    .product-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .price { font-size: 1.2rem; font-weight: 700; }
+    .add-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .add-btn:hover { background: var(--primary-dark); }
+
+    /* Distribución */
+    .distribution { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .distribution .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .badge {
+      display: inline-block;
+      background: #fff4e3;
+      color: #9a5b00;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    .distribution ul { list-style: none; margin-top: 16px; }
+    .distribution li { padding: 6px 0; color: var(--muted); }
+    .distribution li::before { content: "✓ "; color: var(--primary); font-weight: 700; }
+    form {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: grid;
+      gap: 12px;
+    }
+    label { font-size: 0.9rem; font-weight: 600; }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-top: 4px;
+      background: #fff;
+    }
+
+    /* Nosotros */
+    .about { text-align: center; max-width: 720px; margin: 0 auto; }
+
+    /* Footer */
+    footer { background: var(--text); color: #c9d6da; padding: 40px 0 24px; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+    footer h4 { color: #fff; margin-bottom: 8px; }
+    footer li { list-style: none; padding: 2px 0; font-size: 0.9rem; }
+    .footer-bottom { border-top: 1px solid #34464c; padding-top: 16px; font-size: 0.85rem; text-align: center; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 999px;
+      transition: transform 0.3s;
+      font-size: 0.95rem;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Responsive */
+    @media (max-width: 800px) {
+      .nav-links { display: none; }
+      .hero .container,
+      .distribution .container,
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .hero h1 { font-size: 2rem; }
+      .benefits .container { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado -->
+  <header>
+    <div class="container nav">
+      <a href="#" class="logo"><span class="logo-mark">+</span> MediMun</a>
+      <ul class="nav-links">
+        <li><a href="#categorias">Categorías</a></li>
+        <li><a href="#productos">Productos</a></li>
+        <li><a href="#distribucion">Distribución</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+      </ul>
+      <button class="cart-btn" id="cartBtn">🛒 Carrito (<span id="cartCount">0</span>)</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div>
+        <h1>Material de curación confiable, directo a tu puerta</h1>
+        <p>Gasas, vendas, apósitos y todo lo necesario para tu botiquín en casa, oficina o consultorio.</p>
+        <div class="hero-actions">
+          <a href="#productos" class="btn btn-accent">Ver productos</a>
+          <a href="#distribucion" class="btn btn-outline">Soy negocio</a>
+        </div>
+      </div>
+      <figure class="hero-visual">
+        <img src="https://images.unsplash.com/photo-1561328165-f0b762a9508e?w=900&q=80&auto=format&fit=crop"
+             alt="Cajón con material de curación nuevo en empaques estériles">
+        <figcaption>Foto: <a href="https://unsplash.com/@ibrahimboran" target="_blank" rel="noopener">Ibrahim Boran</a> / Unsplash</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Beneficios -->
+  <div class="benefits">
+    <div class="container">
+      <div class="benefit"><strong>Envío rápido</strong><span>24–72 horas</span></div>
+      <div class="benefit"><strong>Pago seguro</strong><span>Tarjeta y transferencia</span></div>
+      <div class="benefit"><strong>Precios por volumen</strong><span>Ahorra al comprar más</span></div>
+      <div class="benefit"><strong>Atención personal</strong><span>Te asesoramos</span></div>
+    </div>
+  </div>
+
+  <!-- Categorías -->
+  <section id="categorias">
+    <div class="container">
+      <h2 class="section-title">Categorías</h2>
+      <p class="section-sub">Encuentra rápidamente lo que necesitas.</p>
+      <div class="categories">
+        <div class="category"><span class="icon">🧻</span>Gasas</div>
+        <div class="category"><span class="icon">🩹</span>Apósitos y curitas</div>
+        <div class="category"><span class="icon">🎗️</span>Vendas</div>
+        <div class="category"><span class="icon">📏</span>Cintas adhesivas</div>
+        <div class="category"><span class="icon">☁️</span>Algodón</div>
+        <div class="category"><span class="icon">🧤</span>Guantes</div>
+        <div class="category"><span class="icon">🧰</span>Botiquines</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Productos -->
+  <section id="productos" style="padding-top: 0;">
+    <div class="container">
+      <h2 class="section-title">Productos destacados</h2>
+      <p class="section-sub">Lo más vendido de nuestro catálogo.</p>
+      <div class="products" id="productGrid"></div>
+    </div>
+  </section>
+
+  <!-- Distribución (futuro) -->
+  <section id="distribucion" class="distribution">
+    <div class="container">
+      <div>
+        <span class="badge">PRÓXIMAMENTE</span>
+        <h2 class="section-title">Distribución para negocios</h2>
+        <p class="section-sub" style="margin-bottom: 0;">
+          Estamos preparando nuestro programa de distribución para farmacias, consultorios,
+          escuelas, empresas y clínicas. Déjanos tus datos y te contactamos.
+        </p>
+        <ul>
+          <li>Precios de mayoreo</li>
+          <li>Pedidos recurrentes</li>
+          <li>Facturación y crédito para clientes frecuentes</li>
+          <li>Ejecutivo de cuenta asignado</li>
+        </ul>
+      </div>
+      <form id="distForm">
+        <div>
+          <label for="negocio">Nombre del negocio</label>
+          <input id="negocio" type="text" placeholder="Ej. Farmacia San José" required>
+        </div>
+        <div>
+          <label for="tipo">Tipo de negocio</label>
+          <select id="tipo">
+            <option>Farmacia</option>
+            <option>Consultorio / Clínica</option>
+            <option>Empresa</option>
+            <option>Escuela</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div>
+          <label for="correo">Correo de contacto</label>
+          <input id="correo" type="email" placeholder="contacto@negocio.com" required>
+        </div>
+        <button type="submit" class="btn btn-accent">Quiero ser cliente mayorista</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Nosotros -->
+  <section id="nosotros">
+    <div class="container about">
+      <h2 class="section-title">Sobre MediMun</h2>
+      <p class="section-sub">
+        En MediMun creemos que tener material de curación de calidad debe ser fácil y accesible.
+        Vendemos productos de uso cotidiano que no requieren registro sanitario especial,
+        para que hogares y negocios estén siempre preparados.
+      </p>
+    </div>
+  </section>
+
+  <!-- Pie de página -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>MediMun</h4>
+          <p style="font-size: 0.9rem;">Equipos y material de curación para todos.</p>
+        </div>
+        <div>
+          <h4>Tienda</h4>
+          <ul>
+            <li><a href="#categorias">Categorías</a></li>
+            <li><a href="#productos">Productos</a></li>
+            <li><a href="#distribucion">Distribución</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contacto</h4>
+          <ul>
+            <li>contacto@medimun.com</li>
+            <li>Lun – Vie, 9:00 – 18:00</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2026 MediMun · Proyecto académico — Applied Algorithmic Thinking, Universidad de la Libertad
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Catálogo de ejemplo (mockup)
+    const products = [
+      { name: "Gasa estéril 10x10 cm", cat: "Gasas", desc: "Caja con 100 sobres individuales.", price: 189, icon: "🧻" },
+      { name: "Venda elástica 10 cm", cat: "Vendas", desc: "Paquete de 12 piezas, 5 m cada una.", price: 145, icon: "🎗️" },
+      { name: "Curitas surtidas", cat: "Apósitos", desc: "Caja con 100 piezas de varios tamaños.", price: 79, icon: "🩹" },
+      { name: "Cinta microporosa 2.5 cm", cat: "Cintas", desc: "Rollo hipoalergénico de 9 m.", price: 39, icon: "📏" },
+      { name: "Algodón plisado 300 g", cat: "Algodón", desc: "100% algodón, suave y absorbente.", price: 65, icon: "☁️" },
+      { name: "Guantes de nitrilo (M)", cat: "Guantes", desc: "Caja con 100 guantes sin polvo.", price: 210, icon: "🧤" },
+      { name: "Apósito adhesivo 10x15 cm", cat: "Apósitos", desc: "Paquete de 25 apósitos estériles.", price: 159, icon: "🩹" },
+      { name: "Botiquín básico", cat: "Botiquines", desc: "Kit armado para hogar u oficina.", price: 399, icon: "🧰" }
+    ];
+
+    const grid = document.getElementById("productGrid");
+    const cartCount = document.getElementById("cartCount");
+    const toast = document.getElementById("toast");
+    let cart = [];
+
+    const formatPrice = (n) => "$" + n.toLocaleString("es-MX") + " MXN";
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2000);
+    }
+
+    products.forEach((p, i) => {
+      const card = document.createElement("div");
+      card.className = "product";
+      card.innerHTML = `
+        <div class="product-img">${p.icon}</div>
+        <div class="product-body">
+          <span class="product-cat">${p.cat}</span>
+          <span class="product-name">${p.name}</span>
+          <span class="product-desc">${p.desc}</span>
+          <div class="product-footer">
+            <span class="price">${formatPrice(p.price)}</span>
+            <button class="add-btn" data-index="${i}">Agregar</button>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    grid.addEventListener("click", (e) => {
+      const btn = e.target.closest(".add-btn");
+      if (!btn) return;
+      const product = products[btn.dataset.index];
+      cart.push(product);
+      cartCount.textContent = cart.length;
+      showToast(`${product.name} agregado al carrito`);
+    });
+
+    document.getElementById("cartBtn").addEventListener("click", () => {
+      if (cart.length === 0) return showToast("Tu carrito está vacío");
+      const total = cart.reduce((sum, p) => sum + p.price, 0);
+      showToast(`${cart.length} artículo(s) · Total: ${formatPrice(total)}`);
+    });
+
+    document.getElementById("distForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      showToast("¡Gracias! Te contactaremos pronto (demo)");
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>
