@@ -9,8 +9,9 @@ Proyecto académico para la materia **Applied Algorithmic Thinking** — Univers
 
 Mockup inicial en un solo archivo (`index.html`): HTML, CSS y JavaScript sin dependencias ni proceso de build.
 
-- Catálogo de productos de ejemplo con carrito demo
-- Categorías de producto
+- Catálogo de productos de ejemplo, filtrable por categoría
+- Carrito con cantidades y total
+- Formulario de datos del cliente para confirmar el pedido (demo: no cobra, no envía ni guarda datos)
 - Sección "Próximamente" para distribución mayorista
 - Diseño adaptable a celular
 

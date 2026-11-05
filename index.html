@@ -263,9 +263,54 @@
       padding: 12px 20px;
       border-radius: 999px;
       transition: transform 0.3s;
+      z-index: 30;
       font-size: 0.95rem;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Filtro de categorías */
+    .category { font: inherit; color: inherit; }
+    .category.active { border-color: var(--primary); background: #e7f3f4; }
+
+    /* Carrito */
+    [hidden] { display: none !important; }
+    .cart-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); z-index: 20; }
+    .cart-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(420px, 100%);
+      background: var(--card);
+      z-index: 21;
+      padding: 24px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cart-head { display: flex; justify-content: space-between; align-items: center; }
+    .cart-head h2 { font-size: 1.3rem; }
+    .icon-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .cart-item { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .cart-item-name { font-weight: 600; }
+    .cart-item-price { color: var(--muted); font-size: 0.9rem; }
+    .qty { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .cart-total { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; }
+    .check { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+    .check input { width: auto; margin: 0; }
+    .demo-note { color: var(--muted); font-size: 0.85rem; }
+    .btn-full { width: 100%; }
+    .btn-primary { background: var(--primary); color: #fff; }
 
     /* Responsive */
     @media (max-width: 800px) {
@@ -273,7 +318,6 @@
       .hero .container,
       .distribution .container,
       .footer-grid { grid-template-columns: 1fr; }
-      .hero-visual { display: none; }
       .hero h1 { font-size: 2rem; }
       .benefits .container { grid-template-columns: repeat(2, 1fr); }
     }
@@ -329,14 +373,15 @@
     <div class="container">
       <h2 class="section-title">Categorías</h2>
       <p class="section-sub">Encuentra rápidamente lo que necesitas.</p>
-      <div class="categories">
-        <div class="category"><span class="icon">🧻</span>Gasas</div>
-        <div class="category"><span class="icon">🩹</span>Apósitos y curitas</div>
-        <div class="category"><span class="icon">🎗️</span>Vendas</div>
-        <div class="category"><span class="icon">📏</span>Cintas adhesivas</div>
-        <div class="category"><span class="icon">☁️</span>Algodón</div>
-        <div class="category"><span class="icon">🧤</span>Guantes</div>
-        <div class="category"><span class="icon">🧰</span>Botiquines</div>
+      <div class="categories" id="categoryFilter">
+        <button type="button" class="category active" data-cat=""><span class="icon">🛒</span>Todas</button>
+        <button type="button" class="category" data-cat="Gasas"><span class="icon">🧻</span>Gasas</button>
+        <button type="button" class="category" data-cat="Apósitos"><span class="icon">🩹</span>Apósitos y curitas</button>
+        <button type="button" class="category" data-cat="Vendas"><span class="icon">🎗️</span>Vendas</button>
+        <button type="button" class="category" data-cat="Cintas"><span class="icon">📏</span>Cintas adhesivas</button>
+        <button type="button" class="category" data-cat="Algodón"><span class="icon">☁️</span>Algodón</button>
+        <button type="button" class="category" data-cat="Guantes"><span class="icon">🧤</span>Guantes</button>
+        <button type="button" class="category" data-cat="Botiquines"><span class="icon">🧰</span>Botiquines</button>
       </div>
     </div>
   </section>
@@ -433,6 +478,64 @@
     </div>
   </footer>
 
+  <!-- Carrito y datos del cliente -->
+  <div class="cart-overlay" id="cartOverlay" hidden></div>
+  <aside class="cart-panel" id="cartPanel" aria-label="Carrito" hidden>
+    <div class="cart-head">
+      <h2 id="cartTitle">Tu carrito</h2>
+      <button type="button" class="icon-btn" id="cartClose" aria-label="Cerrar">✕</button>
+    </div>
+
+    <div id="cartView">
+      <div id="cartItems"></div>
+      <div class="cart-total" style="margin: 16px 0;"><span>Total</span><span id="cartTotal"></span></div>
+      <button type="button" class="btn btn-primary btn-full" id="toCheckout">Continuar con mis datos</button>
+    </div>
+
+    <form id="checkoutForm" hidden>
+      <div>
+        <label for="cNombre">Nombre completo</label>
+        <input id="cNombre" type="text" autocomplete="name" required>
+      </div>
+      <div>
+        <label for="cCorreo">Correo electrónico</label>
+        <input id="cCorreo" type="email" autocomplete="email" required>
+      </div>
+      <div>
+        <label for="cTelefono">Teléfono</label>
+        <input id="cTelefono" type="tel" autocomplete="tel" required>
+      </div>
+      <div>
+        <label for="cTipo">Tipo de cliente</label>
+        <select id="cTipo">
+          <option>Persona</option>
+          <option>Farmacia</option>
+          <option>Consultorio/Clínica</option>
+          <option>Empresa</option>
+          <option>Escuela</option>
+        </select>
+      </div>
+      <div>
+        <label for="cDireccion">Dirección de entrega</label>
+        <input id="cDireccion" type="text" autocomplete="street-address" required>
+      </div>
+      <div>
+        <label for="cCp">Código postal</label>
+        <input id="cCp" type="text" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" title="5 dígitos" autocomplete="postal-code" required>
+      </div>
+      <label class="check"><input id="cFactura" type="checkbox"> Quiero factura</label>
+      <label class="check"><input id="cPromos" type="checkbox"> Acepto recibir promociones</label>
+      <p class="demo-note">Esta página es una demostración: no cobra ni envía ni guarda tus datos.</p>
+      <button type="submit" class="btn btn-accent btn-full">Confirmar pedido</button>
+      <button type="button" class="btn btn-full" id="backToCart" style="background: none;">Volver al carrito</button>
+    </form>
+
+    <div id="orderDone" hidden>
+      <p id="orderMsg" style="margin-bottom: 16px;"></p>
+      <button type="button" class="btn btn-primary btn-full" id="orderClose">Seguir comprando</button>
+    </div>
+  </aside>
+
   <div class="toast" id="toast"></div>
 
   <script>
@@ -451,7 +554,8 @@
     const grid = document.getElementById("productGrid");
     const cartCount = document.getElementById("cartCount");
     const toast = document.getElementById("toast");
-    let cart = [];
+    const $ = (id) => document.getElementById(id);
+    let cart = []; // [{ index, qty }]
 
     const formatPrice = (n) => "$" + n.toLocaleString("es-MX") + " MXN";
 
@@ -462,37 +566,127 @@
       showToast.timer = setTimeout(() => toast.classList.remove("show"), 2000);
     }
 
-    products.forEach((p, i) => {
-      const card = document.createElement("div");
-      card.className = "product";
-      card.innerHTML = `
-        <div class="product-img">${p.icon}</div>
-        <div class="product-body">
-          <span class="product-cat">${p.cat}</span>
-          <span class="product-name">${p.name}</span>
-          <span class="product-desc">${p.desc}</span>
-          <div class="product-footer">
-            <span class="price">${formatPrice(p.price)}</span>
-            <button class="add-btn" data-index="${i}">Agregar</button>
-          </div>
-        </div>`;
-      grid.appendChild(card);
+    function renderProducts(cat) {
+      grid.innerHTML = "";
+      products.forEach((p, i) => {
+        if (cat && p.cat !== cat) return;
+        const card = document.createElement("div");
+        card.className = "product";
+        card.innerHTML = `
+          <div class="product-img">${p.icon}</div>
+          <div class="product-body">
+            <span class="product-cat">${p.cat}</span>
+            <span class="product-name">${p.name}</span>
+            <span class="product-desc">${p.desc}</span>
+            <div class="product-footer">
+              <span class="price">${formatPrice(p.price)}</span>
+              <button class="add-btn" data-index="${i}">Agregar</button>
+            </div>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+    renderProducts("");
+
+    $("categoryFilter").addEventListener("click", (e) => {
+      const btn = e.target.closest(".category");
+      if (!btn) return;
+      document.querySelectorAll(".category").forEach((c) => c.classList.toggle("active", c === btn));
+      renderProducts(btn.dataset.cat);
+      $("productos").scrollIntoView({ behavior: "smooth" });
     });
+
+    const cartTotal = () => cart.reduce((sum, item) => sum + products[item.index].price * item.qty, 0);
+
+    function renderCart() {
+      cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+      $("cartTotal").textContent = formatPrice(cartTotal());
+      $("toCheckout").hidden = cart.length === 0;
+      $("cartItems").innerHTML = cart.length === 0
+        ? '<p class="demo-note">Tu carrito está vacío.</p>'
+        : cart.map((item) => {
+            const p = products[item.index];
+            return `
+              <div class="cart-item">
+                <div>
+                  <div class="cart-item-name">${p.name}</div>
+                  <div class="cart-item-price">${formatPrice(p.price)} c/u</div>
+                </div>
+                <div class="qty">
+                  <button type="button" class="icon-btn" data-step="-1" data-index="${item.index}" aria-label="Quitar uno">−</button>
+                  <span>${item.qty}</span>
+                  <button type="button" class="icon-btn" data-step="1" data-index="${item.index}" aria-label="Agregar uno">+</button>
+                </div>
+              </div>`;
+          }).join("");
+    }
+
+    function changeQty(index, step) {
+      const item = cart.find((it) => it.index === index);
+      if (item) item.qty += step;
+      else cart.push({ index, qty: step });
+      cart = cart.filter((it) => it.qty > 0);
+      renderCart();
+    }
+
+    function showStep(step) {
+      $("cartView").hidden = step !== "cart";
+      $("checkoutForm").hidden = step !== "checkout";
+      $("orderDone").hidden = step !== "done";
+      $("cartTitle").textContent = { cart: "Tu carrito", checkout: "Tus datos", done: "Pedido recibido" }[step];
+    }
+
+    function toggleCart(open) {
+      $("cartPanel").hidden = !open;
+      $("cartOverlay").hidden = !open;
+      if (open) showStep("cart");
+    }
 
     grid.addEventListener("click", (e) => {
       const btn = e.target.closest(".add-btn");
       if (!btn) return;
-      const product = products[btn.dataset.index];
-      cart.push(product);
-      cartCount.textContent = cart.length;
-      showToast(`${product.name} agregado al carrito`);
+      const index = Number(btn.dataset.index);
+      changeQty(index, 1);
+      showToast(`${products[index].name} agregado al carrito`);
     });
 
-    document.getElementById("cartBtn").addEventListener("click", () => {
-      if (cart.length === 0) return showToast("Tu carrito está vacío");
-      const total = cart.reduce((sum, p) => sum + p.price, 0);
-      showToast(`${cart.length} artículo(s) · Total: ${formatPrice(total)}`);
+    $("cartItems").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-step]");
+      if (btn) changeQty(Number(btn.dataset.index), Number(btn.dataset.step));
     });
+
+    $("cartBtn").addEventListener("click", () => toggleCart(true));
+    $("cartClose").addEventListener("click", () => toggleCart(false));
+    $("cartOverlay").addEventListener("click", () => toggleCart(false));
+    $("orderClose").addEventListener("click", () => toggleCart(false));
+    $("toCheckout").addEventListener("click", () => showStep("checkout"));
+    $("backToCart").addEventListener("click", () => showStep("cart"));
+
+    $("checkoutForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      // Lo que se guardaría en una base de datos real
+      const pedido = {
+        nombre: $("cNombre").value.trim(),
+        correo: $("cCorreo").value.trim(),
+        telefono: $("cTelefono").value.trim(),
+        tipoCliente: $("cTipo").value,
+        direccion: $("cDireccion").value.trim(),
+        codigoPostal: $("cCp").value,
+        quiereFactura: $("cFactura").checked,
+        aceptaPromociones: $("cPromos").checked,
+        fecha: new Date().toISOString().slice(0, 10),
+        productos: cart.map((it) => ({ nombre: products[it.index].name, cantidad: it.qty, precio: products[it.index].price })),
+        total: cartTotal()
+      };
+      console.log(JSON.stringify(pedido, null, 2));
+      $("orderMsg").textContent = `Gracias, ${pedido.nombre}. Tu pedido de demostración por ${formatPrice(pedido.total)} quedó registrado solo en esta pantalla.`;
+      cart = [];
+      renderCart();
+      e.target.reset();
+      showStep("done");
+    });
+
+    renderCart();
 
     document.getElementById("distForm").addEventListener("submit", (e) => {
       e.preventDefault();
