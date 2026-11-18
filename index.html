@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MediMun | Equipos de curación</title>
-  <meta name="description" content="MediMun: tienda en línea de material de curación. Gasas, vendas, apósitos y más.">
+  <title>MediMun | Salud y ortopedia</title>
+  <meta name="description" content="MediMun: tienda en línea de productos de salud: ortopedia, terapia de frío y calor, cuidado en casa y recuperación.">
   <style>
     :root {
-      --primary: #0e7c86;
-      --primary-dark: #0a5c63;
-      --accent: #f2a541;
-      --bg: #f6f9fa;
+      --navy: #082748;
+      --primary: #013c78;
+      --teal: #02a4af;
+      --accent: #46b468;
+      --tint: #e6f6f7;
+      --bg: #f4f9fa;
       --card: #ffffff;
-      --text: #1d2b30;
-      --muted: #5f7379;
-      --border: #dde7ea;
+      --text: #082748;
+      --muted: #4f6478;
+      --border: #d7e5ea;
       --radius: 12px;
     }
 
@@ -46,24 +48,8 @@
       height: 68px;
       gap: 16px;
     }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .logo-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: var(--primary);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 1.2rem;
-    }
+    .logo { display: flex; align-items: center; }
+    .logo img { height: 52px; width: auto; display: block; }
     .nav-links { display: flex; gap: 24px; list-style: none; }
     .nav-links a { color: var(--muted); font-weight: 500; }
     .nav-links a:hover { color: var(--primary); }
@@ -77,23 +63,17 @@
       cursor: pointer;
       white-space: nowrap;
     }
-    .cart-btn:hover { background: var(--primary-dark); }
+    .cart-btn:hover { background: var(--navy); }
 
     /* Hero */
     .hero {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: linear-gradient(120deg, var(--navy) 0%, var(--primary) 60%, var(--teal) 100%);
       color: #fff;
       padding: 72px 0;
     }
-    .hero .container {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 40px;
-      align-items: center;
-    }
-    .hero h1 { font-size: 2.6rem; line-height: 1.15; margin-bottom: 16px; }
-    .hero p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 28px; }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero .container { text-align: center; }
+    .hero h1 { font-size: 2.6rem; line-height: 1.15; margin-bottom: 28px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
     .btn {
       display: inline-block;
       padding: 12px 24px;
@@ -105,24 +85,6 @@
     }
     .btn-accent { background: var(--accent); color: var(--text); }
     .btn-outline { border-color: #fff; color: #fff; background: transparent; }
-    .hero-visual {
-      margin: 0;
-      border-radius: 20px;
-      overflow: hidden;
-      aspect-ratio: 4 / 3;
-      background: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-      position: relative;
-    }
-    .hero-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hero-visual figcaption {
-      position: absolute;
-      right: 8px;
-      bottom: 6px;
-      font-size: 0.7rem;
-      opacity: 0.8;
-    }
-    .hero-visual figcaption a { text-decoration: underline; }
 
     /* Beneficios */
     .benefits { padding: 32px 0; background: var(--card); border-bottom: 1px solid var(--border); }
@@ -174,12 +136,32 @@
       flex-direction: column;
     }
     .product-img {
-      background: #e7f3f4;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
       aspect-ratio: 1 / 1;
       display: grid;
       place-items: center;
-      font-size: 3.5rem;
+      overflow: hidden;
     }
+    .product-img img { max-width: 88%; max-height: 88%; object-fit: contain; }
+    .product-img img.small { width: 62%; height: auto; }
+    .product-img img.photo { width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; }
+    .thumbs { display: flex; gap: 6px; padding: 8px 16px 0; }
+    .thumb {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      cursor: pointer;
+    }
+    .thumb.active { border-color: var(--primary); }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .stock { font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+    .stock.low { color: #b45309; }
+    .add-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
     .product-body { padding: 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
     .product-cat { font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
     .product-name { font-weight: 600; }
@@ -195,7 +177,7 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .add-btn:hover { background: var(--primary-dark); }
+    .add-btn:hover { background: var(--navy); }
 
     /* Distribución */
     .distribution { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
@@ -204,16 +186,6 @@
       grid-template-columns: 1fr 1fr;
       gap: 40px;
       align-items: start;
-    }
-    .badge {
-      display: inline-block;
-      background: #fff4e3;
-      color: #9a5b00;
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 999px;
-      margin-bottom: 12px;
     }
     .distribution ul { list-style: none; margin-top: 16px; }
     .distribution li { padding: 6px 0; color: var(--muted); }
@@ -241,7 +213,7 @@
     .about { text-align: center; max-width: 720px; margin: 0 auto; }
 
     /* Footer */
-    footer { background: var(--text); color: #c9d6da; padding: 40px 0 24px; }
+    footer { background: var(--navy); color: #c5d6e4; padding: 40px 0 24px; }
     .footer-grid {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr;
@@ -250,7 +222,7 @@
     }
     footer h4 { color: #fff; margin-bottom: 8px; }
     footer li { list-style: none; padding: 2px 0; font-size: 0.9rem; }
-    .footer-bottom { border-top: 1px solid #34464c; padding-top: 16px; font-size: 0.85rem; text-align: center; }
+    .footer-bottom { border-top: 1px solid #27486b; padding-top: 16px; font-size: 0.85rem; text-align: center; }
 
     /* Toast */
     .toast {
@@ -270,7 +242,7 @@
 
     /* Filtro de categorías */
     .category { font: inherit; color: inherit; }
-    .category.active { border-color: var(--primary); background: #e7f3f4; }
+    .category.active { border-color: var(--primary); background: var(--tint); }
 
     /* Carrito */
     [hidden] { display: none !important; }
@@ -315,7 +287,6 @@
     /* Responsive */
     @media (max-width: 800px) {
       .nav-links { display: none; }
-      .hero .container,
       .distribution .container,
       .footer-grid { grid-template-columns: 1fr; }
       .hero h1 { font-size: 2rem; }
@@ -328,7 +299,7 @@
   <!-- Encabezado -->
   <header>
     <div class="container nav">
-      <a href="#" class="logo"><span class="logo-mark">+</span> MediMun</a>
+      <a href="#" class="logo"><img src="img/logo.png" alt="MediMun" width="280" height="102"></a>
       <ul class="nav-links">
         <li><a href="#categorias">Categorías</a></li>
         <li><a href="#productos">Productos</a></li>
@@ -343,18 +314,12 @@
   <section class="hero">
     <div class="container">
       <div>
-        <h1>Material de curación confiable, directo a tu puerta</h1>
-        <p>Gasas, vendas, apósitos y todo lo necesario para tu botiquín en casa, oficina o consultorio.</p>
+        <h1>Productos de salud y ortopedia, directo a tu puerta</h1>
         <div class="hero-actions">
           <a href="#productos" class="btn btn-accent">Ver productos</a>
           <a href="#distribucion" class="btn btn-outline">Soy negocio</a>
         </div>
       </div>
-      <figure class="hero-visual">
-        <img src="https://images.unsplash.com/photo-1561328165-f0b762a9508e?w=900&q=80&auto=format&fit=crop"
-             alt="Cajón con material de curación nuevo en empaques estériles">
-        <figcaption>Foto: <a href="https://unsplash.com/@ibrahimboran" target="_blank" rel="noopener">Ibrahim Boran</a> / Unsplash</figcaption>
-      </figure>
     </div>
   </section>
 
@@ -375,13 +340,12 @@
       <p class="section-sub">Encuentra rápidamente lo que necesitas.</p>
       <div class="categories" id="categoryFilter">
         <button type="button" class="category active" data-cat=""><span class="icon">🛒</span>Todas</button>
-        <button type="button" class="category" data-cat="Gasas"><span class="icon">🧻</span>Gasas</button>
-        <button type="button" class="category" data-cat="Apósitos"><span class="icon">🩹</span>Apósitos y curitas</button>
-        <button type="button" class="category" data-cat="Vendas"><span class="icon">🎗️</span>Vendas</button>
-        <button type="button" class="category" data-cat="Cintas"><span class="icon">📏</span>Cintas adhesivas</button>
-        <button type="button" class="category" data-cat="Algodón"><span class="icon">☁️</span>Algodón</button>
-        <button type="button" class="category" data-cat="Guantes"><span class="icon">🧤</span>Guantes</button>
-        <button type="button" class="category" data-cat="Botiquines"><span class="icon">🧰</span>Botiquines</button>
+        <button type="button" class="category" data-cat="Ortopedia"><span class="icon">🦴</span>Ortopedia</button>
+        <button type="button" class="category" data-cat="Frío y calor"><span class="icon">🧊</span>Frío y calor</button>
+        <button type="button" class="category" data-cat="Cojines"><span class="icon">🛏️</span>Cojines y almohadas</button>
+        <button type="button" class="category" data-cat="Cuidado en casa"><span class="icon">🏠</span>Cuidado en casa</button>
+        <button type="button" class="category" data-cat="Ejercicio"><span class="icon">🏋️</span>Ejercicio y recuperación</button>
+        <button type="button" class="category" data-cat="Medición"><span class="icon">📏</span>Medición y enfermería</button>
       </div>
     </div>
   </section>
@@ -389,8 +353,8 @@
   <!-- Productos -->
   <section id="productos" style="padding-top: 0;">
     <div class="container">
-      <h2 class="section-title">Productos destacados</h2>
-      <p class="section-sub">Lo más vendido de nuestro catálogo.</p>
+      <h2 class="section-title">Nuestros productos</h2>
+      <p class="section-sub">Ortopedia, terapia de frío y calor, cuidado en casa y más.</p>
       <div class="products" id="productGrid"></div>
     </div>
   </section>
@@ -399,11 +363,10 @@
   <section id="distribucion" class="distribution">
     <div class="container">
       <div>
-        <span class="badge">PRÓXIMAMENTE</span>
         <h2 class="section-title">Distribución para negocios</h2>
         <p class="section-sub" style="margin-bottom: 0;">
-          Estamos preparando nuestro programa de distribución para farmacias, consultorios,
-          escuelas, empresas y clínicas. Déjanos tus datos y te contactamos.
+          Distribuimos nuestros productos a farmacias, consultorios, escuelas,
+          empresas y clínicas. Déjanos tus datos y te contactamos.
         </p>
         <ul>
           <li>Precios de mayoreo</li>
@@ -441,9 +404,9 @@
     <div class="container about">
       <h2 class="section-title">Sobre MediMun</h2>
       <p class="section-sub">
-        En MediMun creemos que tener material de curación de calidad debe ser fácil y accesible.
-        Vendemos productos de uso cotidiano que no requieren registro sanitario especial,
-        para que hogares y negocios estén siempre preparados.
+        En MediMun creemos que cuidar tu salud en casa debe ser fácil y accesible.
+        Ofrecemos productos de ortopedia, terapia de frío y calor, cuidado del adulto mayor
+        y recuperación, para que hogares y negocios estén siempre preparados.
       </p>
     </div>
   </section>
@@ -454,7 +417,7 @@
       <div class="footer-grid">
         <div>
           <h4>MediMun</h4>
-          <p style="font-size: 0.9rem;">Equipos y material de curación para todos.</p>
+          <p style="font-size: 0.9rem;">Productos de salud y ortopedia para todos.</p>
         </div>
         <div>
           <h4>Tienda</h4>
@@ -467,13 +430,13 @@
         <div>
           <h4>Contacto</h4>
           <ul>
-            <li>contacto@medimun.com</li>
+            <li><a href="mailto:leacooperml@gmail.com">leacooperml@gmail.com</a></li>
             <li>Lun – Vie, 9:00 – 18:00</li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        © 2026 MediMun · Proyecto académico — Applied Algorithmic Thinking, Universidad de la Libertad
+        © 2026 MediMun
       </div>
     </div>
   </footer>
@@ -541,15 +504,27 @@
   <script>
     // Catálogo de ejemplo (mockup)
     const products = [
-      { name: "Gasa estéril 10x10 cm", cat: "Gasas", desc: "Caja con 100 sobres individuales.", price: 189, icon: "🧻" },
-      { name: "Venda elástica 10 cm", cat: "Vendas", desc: "Paquete de 12 piezas, 5 m cada una.", price: 145, icon: "🎗️" },
-      { name: "Curitas surtidas", cat: "Apósitos", desc: "Caja con 100 piezas de varios tamaños.", price: 79, icon: "🩹" },
-      { name: "Cinta microporosa 2.5 cm", cat: "Cintas", desc: "Rollo hipoalergénico de 9 m.", price: 39, icon: "📏" },
-      { name: "Algodón plisado 300 g", cat: "Algodón", desc: "100% algodón, suave y absorbente.", price: 65, icon: "☁️" },
-      { name: "Guantes de nitrilo (M)", cat: "Guantes", desc: "Caja con 100 guantes sin polvo.", price: 210, icon: "🧤" },
-      { name: "Apósito adhesivo 10x15 cm", cat: "Apósitos", desc: "Paquete de 25 apósitos estériles.", price: 159, icon: "🩹" },
-      { name: "Botiquín básico", cat: "Botiquines", desc: "Kit armado para hogar u oficina.", price: 399, icon: "🧰" }
-    ];
+      { name: "Tobillera de compresión elástica", cat: "Ortopedia", img: "tobillera.jpg", more: ["tobillera-2.jpg", "tobillera-3.jpg"], price: 129, desc: "Soporte elástico con correa ajustable para esguinces, tobillo débil y fascitis plantar. Talla universal." },
+      { name: "Codera de compresión", cat: "Ortopedia", img: "codera.jpg", more: ["codera-2.jpg", "codera-3.jpg"], price: 139, desc: "Manga elástica tejida que da soporte al codo en epicondilitis (codo de tenista) y esfuerzo repetitivo." },
+      { name: "Muñequera inmovilizadora", cat: "Ortopedia", img: "munequera.jpg", more: ["munequera-2.jpg", "munequera-3.jpg"], price: 309, desc: "Muñequera con soporte rígido y cierres de velcro para inmovilizar y proteger la muñeca." },
+      { name: "Bota walker corta", cat: "Ortopedia", img: "bota-walker.jpg", more: ["bota-walker-2.jpg", "bota-walker-3.jpg"], price: 849, desc: "Bota ortopédica corta para inmovilizar el tobillo; alternativa cómoda al yeso cuando el médico la indica." },
+      { name: "Plantillas ortopédicas", cat: "Ortopedia", img: "plantillas.jpg", more: ["plantillas-2.jpg", "plantillas-3.jpg"], price: 139, desc: "Plantillas con soporte de arco que reparten la pisada y alivian fascitis plantar y pie plano." },
+      { name: "Talonera de gel para espolón (2 pares)", cat: "Ortopedia", img: "talonera.jpg", more: ["talonera-2.jpg", "talonera-3.jpg"], price: 119, desc: "Taloneras de gel de silicón que amortiguan el talón y alivian el dolor por espolón." },
+      { name: "Protector y separador de juanete de gel (3 pares)", cat: "Ortopedia", img: "protector-juanete.jpg", more: ["protector-juanete-2.jpg", "protector-juanete-3.jpg"], price: 119, desc: "Protectores de silicón suave que separan el dedo y reducen la fricción del juanete al caminar." },
+      { name: "Bolsa de agua fría y caliente", cat: "Frío y calor", img: "bolsa-frio-calor.jpg", more: ["bolsa-frio-calor-2.jpg", "bolsa-frio-calor-3.jpg"], price: 119, desc: "Bolsa térmica reutilizable para aplicar frío o calor en golpes, dolor muscular y cólicos." },
+      { name: "Compresa de gel frío/calor", cat: "Frío y calor", img: "compresa-gel.jpg", more: ["compresa-gel-2.jpg", "compresa-gel-3.jpg"], price: 105, desc: "Compresa de gel reutilizable: congélala para inflamación o caliéntala para relajar músculos." },
+      { name: "Almohada cervical", cat: "Cojines", img: "almohada-cervical.jpg", more: ["almohada-cervical-2.jpg", "almohada-cervical-3.jpg"], price: 449, desc: "Almohada ortopédica de memory foam que mantiene alineado el cuello para dormir mejor." },
+      { name: "Cojín dona", cat: "Cojines", img: "cojin-dona.jpg", more: ["cojin-dona-2.jpg", "cojin-dona-3.jpg"], price: 329, desc: "Cojín de memory foam con centro libre que reduce la presión al sentarse: coxis, hemorroides o posparto." },
+      { name: "Andadera para adulto", cat: "Cuidado en casa", img: "andadera.jpg", more: ["andadera-2.jpg", "andadera-3.jpg"], price: 589, desc: "Andadera plegable de aluminio, ligera y de altura ajustable, para caminar con más seguridad." },
+      { name: "Paños de baño en seco (paquete)", cat: "Cuidado en casa", img: "panos-bano-seco.jpg", more: ["panos-bano-seco-2.jpg", "panos-bano-seco-3.jpg"], price: 129, desc: "Paños desechables jabonosos para asear sin agua a pacientes en cama o adultos mayores." },
+      { name: "Protector de cama desechable (25 pzs)", cat: "Cuidado en casa", img: "protector-cama.jpg", more: ["protector-cama-2.jpg", "protector-cama-3.jpg"], price: 245, desc: "Protectores absorbentes para incontinencia que mantienen la cama limpia y seca." },
+      { name: "Pastillero semanal mañana, tarde y noche", cat: "Cuidado en casa", img: "pastillero.jpg", more: ["pastillero-2.jpg", "pastillero-3.jpg"], price: 115, desc: "Pastillero de 7 días con 21 compartimentos desmontables para no olvidar ninguna toma." },
+      { name: "Kit fortalecedor de agarre (7 pzs)", cat: "Ejercicio", img: "kit-agarre.jpg", more: ["kit-agarre-2.jpg", "kit-agarre-3.jpg"], price: 119, desc: "Hand grip con contador y ejercitadores de dedos para entrenar fuerza de mano y antebrazo." },
+      { name: "Pelota de pilates 65 cm con bomba", cat: "Ejercicio", img: "pelota-pilates.jpg", more: ["pelota-pilates-2.jpg", "pelota-pilates-3.jpg"], price: 159, desc: "Pelota de 65 cm con bomba incluida para pilates, estiramientos y ejercicio en casa." },
+      { name: "Rodillo de espuma 30 × 10 cm", cat: "Ejercicio", img: "rodillo-espuma.jpg", more: ["rodillo-espuma-2.jpg", "rodillo-espuma-3.jpg"], price: 189, desc: "Foam roller texturizado para masaje miofascial y recuperación después de entrenar." },
+      { name: "Plicómetro", cat: "Medición", img: "plicometro.jpg", more: ["plicometro-2.jpg", "plicometro-3.jpg"], price: 185, desc: "Plicómetro manual para medir pliegues cutáneos y estimar grasa corporal. Ideal para nutriólogos." },
+      { name: "Torniquete con broche", cat: "Medición", img: "torniquete.jpg", more: ["torniquete-2.jpg", "torniquete-3.jpg"], price: 79, desc: "Torniquete elástico con broche de liberación rápida para toma de muestras y canalización." }
+    ].map((p) => ({ ...p, stock: 50 }));
 
     const grid = document.getElementById("productGrid");
     const cartCount = document.getElementById("cartCount");
@@ -566,6 +541,8 @@
       showToast.timer = setTimeout(() => toast.classList.remove("show"), 2000);
     }
 
+    const imgClass = (file) => (file.endsWith(".jpg") ? "photo" : "");
+
     function renderProducts(cat) {
       grid.innerHTML = "";
       products.forEach((p, i) => {
@@ -573,17 +550,32 @@
         const card = document.createElement("div");
         card.className = "product";
         card.innerHTML = `
-          <div class="product-img">${p.icon}</div>
+          <div class="product-img"><img src="img/productos/${p.img}" alt="${p.name}" loading="lazy" class="${imgClass(p.img)}" onload="if (this.naturalWidth < 200) this.classList.add('small')"></div>
+          ${p.more ? `<div class="thumbs">${[p.img, ...p.more].map((f, n) => `<button type="button" class="thumb${n === 0 ? " active" : ""}" data-img="${f}" aria-label="Foto ${n + 1}"><img src="img/productos/${f}" alt="" loading="lazy"></button>`).join("")}</div>` : ""}
           <div class="product-body">
             <span class="product-cat">${p.cat}</span>
             <span class="product-name">${p.name}</span>
             <span class="product-desc">${p.desc}</span>
+            <span class="stock" data-stock="${i}"></span>
             <div class="product-footer">
               <span class="price">${formatPrice(p.price)}</span>
               <button class="add-btn" data-index="${i}">Agregar</button>
             </div>
           </div>`;
         grid.appendChild(card);
+      });
+      updateStock();
+    }
+
+    const inCart = (index) => (cart.find((it) => it.index === index) || { qty: 0 }).qty;
+
+    function updateStock() {
+      grid.querySelectorAll("[data-stock]").forEach((el) => {
+        const i = Number(el.dataset.stock);
+        const left = products[i].stock - inCart(i);
+        el.textContent = left > 1 ? `Quedan ${left} piezas` : left === 1 ? "Queda 1 pieza" : "Agotado";
+        el.classList.toggle("low", left <= 10);
+        grid.querySelector(`.add-btn[data-index="${i}"]`).disabled = left <= 0;
       });
     }
     renderProducts("");
@@ -602,6 +594,7 @@
       cartCount.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
       $("cartTotal").textContent = formatPrice(cartTotal());
       $("toCheckout").hidden = cart.length === 0;
+      updateStock();
       $("cartItems").innerHTML = cart.length === 0
         ? '<p class="demo-note">Tu carrito está vacío.</p>'
         : cart.map((item) => {
@@ -622,11 +615,16 @@
     }
 
     function changeQty(index, step) {
+      if (step > 0 && inCart(index) >= products[index].stock) {
+        showToast(`Solo quedan ${products[index].stock} piezas de este producto`);
+        return false;
+      }
       const item = cart.find((it) => it.index === index);
       if (item) item.qty += step;
       else cart.push({ index, qty: step });
       cart = cart.filter((it) => it.qty > 0);
       renderCart();
+      return true;
     }
 
     function showStep(step) {
@@ -643,11 +641,19 @@
     }
 
     grid.addEventListener("click", (e) => {
+      const thumb = e.target.closest(".thumb");
+      if (thumb) {
+        const card = thumb.closest(".product");
+        const main = card.querySelector(".product-img img");
+        main.src = `img/productos/${thumb.dataset.img}`;
+        main.className = imgClass(thumb.dataset.img);
+        card.querySelectorAll(".thumb").forEach((t) => t.classList.toggle("active", t === thumb));
+        return;
+      }
       const btn = e.target.closest(".add-btn");
       if (!btn) return;
       const index = Number(btn.dataset.index);
-      changeQty(index, 1);
-      showToast(`${products[index].name} agregado al carrito`);
+      if (changeQty(index, 1)) showToast(`${products[index].name} agregado al carrito`);
     });
 
     $("cartItems").addEventListener("click", (e) => {
@@ -688,10 +694,37 @@
 
     renderCart();
 
-    document.getElementById("distForm").addEventListener("submit", (e) => {
+    // Las solicitudes de mayoreo llegan por correo a través de FormSubmit (formsubmit.co)
+    const CONTACT_EMAIL = "leacooperml@gmail.com";
+
+    $("distForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      showToast("¡Gracias! Te contactaremos pronto (demo)");
-      e.target.reset();
+      const form = e.target;
+      const button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+      button.textContent = "Enviando…";
+      try {
+        const res = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            _subject: "Nueva solicitud de cliente mayorista - MediMun",
+            _template: "table",
+            Negocio: $("negocio").value.trim(),
+            "Tipo de negocio": $("tipo").value,
+            email: $("correo").value.trim()
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || String(data.success) !== "true") throw new Error(data.message);
+        showToast("¡Gracias! Recibimos tu solicitud y te contactaremos pronto");
+        form.reset();
+      } catch (err) {
+        showToast(`No se pudo enviar. Escríbenos a ${CONTACT_EMAIL}`);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Quiero ser cliente mayorista";
+      }
     });
   </script>
 </body>
