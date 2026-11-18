@@ -12,7 +12,7 @@ Mockup en `index.html` (HTML, CSS y JavaScript sin dependencias ni proceso de bu
 - Catálogo de 20 productos con foto, descripción, precio y existencias, filtrable por categoría
 - Carrito con cantidades y total
 - Formulario de datos del cliente para confirmar el pedido (demo: no cobra, no envía ni guarda datos)
-- Sección de distribución para negocios con formulario de contacto mayorista
+- **Cotizador para negocios:** calcula el precio de mayoreo por volumen (10% desde 10 piezas, 15% desde 25) y envía la cotización por correo con la API de FormSubmit. Ver [PROMPT_LOG.md](PROMPT_LOG.md).
 - Diseño adaptable a celular
 
 ## Ver localmente

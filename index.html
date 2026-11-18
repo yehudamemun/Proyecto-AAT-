@@ -284,6 +284,19 @@
     .btn-full { width: 100%; }
     .btn-primary { background: var(--primary); color: #fff; }
 
+    /* Cotizador */
+    .quote-title { font-size: 1.15rem; }
+    .quote-line { display: grid; grid-template-columns: 1fr 76px 36px; gap: 8px; margin-top: 8px; align-items: center; }
+    .quote-line select, .quote-line input { margin-top: 0; }
+    .btn-link { background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer; padding: 8px 0 0; font-size: 0.95rem; }
+    .quote-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: #fff; border-radius: 8px; overflow: hidden; }
+    .quote-table th, .quote-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: right; }
+    .quote-table th:first-child, .quote-table td:first-child { text-align: left; }
+    .quote-table tfoot td { font-weight: 700; font-size: 0.95rem; border-bottom: none; }
+    .quote-discount { color: var(--accent); font-weight: 600; }
+    .quote-error { color: #b42318; font-size: 0.85rem; margin-top: 6px; }
+    .quote-folio { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
+
     /* Responsive */
     @media (max-width: 800px) {
       .nav-links { display: none; }
@@ -359,23 +372,26 @@
     </div>
   </section>
 
-  <!-- Distribución (futuro) -->
+  <!-- Distribución y cotizador para negocios -->
   <section id="distribucion" class="distribution">
     <div class="container">
       <div>
         <h2 class="section-title">Distribución para negocios</h2>
         <p class="section-sub" style="margin-bottom: 0;">
           Distribuimos nuestros productos a farmacias, consultorios, escuelas,
-          empresas y clínicas. Déjanos tus datos y te contactamos.
+          empresas y clínicas. Arma tu cotización: elige productos y cantidades, te mostramos
+          el precio de mayoreo al momento y te la enviamos por correo.
         </p>
         <ul>
-          <li>Precios de mayoreo</li>
+          <li>10% de descuento desde 10 piezas por producto</li>
+          <li>15% de descuento desde 25 piezas por producto</li>
           <li>Pedidos recurrentes</li>
           <li>Facturación y crédito para clientes frecuentes</li>
           <li>Ejecutivo de cuenta asignado</li>
         </ul>
       </div>
-      <form id="distForm">
+      <form id="quoteForm" novalidate>
+        <h3 class="quote-title">Cotizador para negocios</h3>
         <div>
           <label for="negocio">Nombre del negocio</label>
           <input id="negocio" type="text" placeholder="Ej. Farmacia San José" required>
@@ -394,7 +410,13 @@
           <label for="correo">Correo de contacto</label>
           <input id="correo" type="email" placeholder="contacto@negocio.com" required>
         </div>
-        <button type="submit" class="btn btn-accent">Quiero ser cliente mayorista</button>
+        <div>
+          <label>Productos y cantidades</label>
+          <div id="quoteLines"></div>
+          <button type="button" class="btn-link" id="addLine">+ Agregar producto</button>
+        </div>
+        <div id="quoteSummary"></div>
+        <button type="submit" class="btn btn-accent">Enviar cotización</button>
       </form>
     </div>
   </section>
@@ -697,9 +719,113 @@
     // Las solicitudes de mayoreo llegan por correo a través de FormSubmit (formsubmit.co)
     const CONTACT_EMAIL = "leacooperml@gmail.com";
 
-    $("distForm").addEventListener("submit", async (e) => {
+    // Cotizador: precio de mayoreo por volumen, por producto (cantidad mínima → % de descuento)
+    const VOLUME_DISCOUNTS = [
+      { min: 25, pct: 15 },
+      { min: 10, pct: 10 }
+    ];
+    const QUOTE_VALIDITY_DAYS = 15;
+    const discountFor = (qty) => (VOLUME_DISCOUNTS.find((d) => qty >= d.min) || { pct: 0 }).pct;
+    const formatMoney = (n) => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " MXN";
+    const productOptions = products.map((p, i) => `<option value="${i}">${p.name} — ${formatPrice(p.price)}</option>`).join("");
+
+    function addQuoteLine(index = 0, qty = 10) {
+      const line = document.createElement("div");
+      line.className = "quote-line";
+      line.innerHTML = `
+        <select aria-label="Producto">${productOptions}</select>
+        <input type="number" min="1" max="50" step="1" value="${qty}" aria-label="Cantidad">
+        <button type="button" class="icon-btn" aria-label="Quitar producto">✕</button>`;
+      line.querySelector("select").value = index;
+      $("quoteLines").appendChild(line);
+      renderQuote();
+    }
+
+    // Calcula la cotización a partir de las líneas; junta las líneas repetidas del mismo producto
+    function buildQuote() {
+      const qtyByProduct = new Map();
+      const errors = [];
+      $("quoteLines").querySelectorAll(".quote-line").forEach((line) => {
+        const index = Number(line.querySelector("select").value);
+        const raw = line.querySelector("input").value;
+        const qty = Number(raw);
+        if (!Number.isInteger(qty) || qty < 1) {
+          errors.push(`La cantidad de "${products[index].name}" debe ser un número entero mayor a 0.`);
+          return;
+        }
+        qtyByProduct.set(index, (qtyByProduct.get(index) || 0) + qty);
+      });
+      const lines = [...qtyByProduct].map(([index, qty]) => {
+        const p = products[index];
+        if (qty > p.stock) errors.push(`Solo tenemos ${p.stock} piezas de "${p.name}" (pediste ${qty}).`);
+        const pct = discountFor(qty);
+        const unit = p.price * (1 - pct / 100);
+        return { name: p.name, qty, listPrice: p.price, pct, unit, subtotal: unit * qty };
+      });
+      const total = lines.reduce((sum, l) => sum + l.subtotal, 0);
+      const savings = lines.reduce((sum, l) => sum + (l.listPrice - l.unit) * l.qty, 0);
+      return { lines, total, savings, errors };
+    }
+
+    function renderQuote() {
+      const q = buildQuote();
+      if (q.lines.length === 0 && q.errors.length === 0) {
+        $("quoteSummary").innerHTML = "";
+        return;
+      }
+      const rows = q.lines.map((l) => `
+        <tr>
+          <td>${l.name}</td>
+          <td>${l.qty}</td>
+          <td>${formatMoney(l.unit)}</td>
+          <td class="${l.pct ? "quote-discount" : ""}">${l.pct ? `-${l.pct}%` : "—"}</td>
+          <td>${formatMoney(l.subtotal)}</td>
+        </tr>`).join("");
+      $("quoteSummary").innerHTML = `
+        <table class="quote-table">
+          <thead><tr><th>Producto</th><th>Pzs</th><th>Precio c/u</th><th>Desc.</th><th>Subtotal</th></tr></thead>
+          <tbody>${rows}</tbody>
+          <tfoot><tr><td colspan="4">Total${q.savings ? ` (ahorras ${formatMoney(q.savings)})` : ""}</td><td>${formatMoney(q.total)}</td></tr></tfoot>
+        </table>
+        ${q.errors.map((e) => `<p class="quote-error">${e}</p>`).join("")}`;
+    }
+
+    $("addLine").addEventListener("click", () => addQuoteLine());
+    $("quoteLines").addEventListener("input", renderQuote);
+    $("quoteLines").addEventListener("click", (e) => {
+      if (!e.target.closest(".icon-btn")) return;
+      e.target.closest(".quote-line").remove();
+      renderQuote();
+    });
+    addQuoteLine();
+
+    // Texto de la cotización que llega al correo de MediMun
+    function quoteText(q, folio, validUntil) {
+      const lines = q.lines.map((l) =>
+        `${l.qty} x ${l.name} — ${formatMoney(l.unit)} c/u${l.pct ? ` (-${l.pct}%)` : ""} = ${formatMoney(l.subtotal)}`);
+      return [`Cotización ${folio}`, ...lines, `Total: ${formatMoney(q.total)}`, `Vigencia: hasta el ${validUntil}`].join("\n");
+    }
+
+    // Las cotizaciones llegan por correo a través de la API de FormSubmit (formsubmit.co)
+    $("quoteForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const form = e.target;
+      const q = buildQuote();
+      const negocio = $("negocio").value.trim();
+      const correo = $("correo").value.trim();
+      const problems = [...q.errors];
+      if (!negocio) problems.push("Escribe el nombre del negocio.");
+      if (!$("correo").checkValidity() || !correo) problems.push("Escribe un correo de contacto válido.");
+      if (q.lines.length === 0) problems.push("Agrega al menos un producto.");
+      if (problems.length) {
+        renderQuote();
+        $("quoteSummary").insertAdjacentHTML("beforeend", problems.filter((p) => !q.errors.includes(p)).map((p) => `<p class="quote-error">${p}</p>`).join(""));
+        return;
+      }
+
+      const now = new Date();
+      const folio = `MM-${now.toISOString().slice(0, 10).replace(/-/g, "")}-${String(now.getTime()).slice(-4)}`;
+      const validUntil = new Date(now.getTime() + QUOTE_VALIDITY_DAYS * 86400000).toLocaleDateString("es-MX");
       const button = form.querySelector('button[type="submit"]');
       button.disabled = true;
       button.textContent = "Enviando…";
@@ -708,22 +834,25 @@
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify({
-            _subject: "Nueva solicitud de cliente mayorista - MediMun",
-            _template: "table",
-            Negocio: $("negocio").value.trim(),
+            _subject: `Cotización ${folio} - ${negocio}`,
+            _template: "box",
+            Negocio: negocio,
             "Tipo de negocio": $("tipo").value,
-            email: $("correo").value.trim()
+            email: correo,
+            Folio: folio,
+            Cotización: quoteText(q, folio, validUntil),
+            Total: formatMoney(q.total)
           })
         });
         const data = await res.json();
         if (!res.ok || String(data.success) !== "true") throw new Error(data.message);
-        showToast("¡Gracias! Recibimos tu solicitud y te contactaremos pronto");
-        form.reset();
+        showToast(`Cotización ${folio} enviada. Te contactaremos pronto.`);
+        $("quoteSummary").insertAdjacentHTML("beforeend", `<p class="quote-folio">Cotización ${folio} enviada · vigente hasta el ${validUntil}</p>`);
       } catch (err) {
         showToast(`No se pudo enviar. Escríbenos a ${CONTACT_EMAIL}`);
       } finally {
         button.disabled = false;
-        button.textContent = "Quiero ser cliente mayorista";
+        button.textContent = "Enviar cotización";
       }
     });
   </script>
